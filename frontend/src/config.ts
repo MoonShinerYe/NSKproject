@@ -2,9 +2,9 @@ export const SITE = {
   name: 'Вокруг НСК',
   tagline: 'гид по необычному Новосибирску',
   city: 'Новосибирск',
-  /** Радиус подтверждения присутствия на месте, метры. */
+  
   checkinRadius: 200,
-  /** Сколько людей/мест показывать в статистике. */
+
   socials: [
     { id: 'vk', label: 'ВКонтакте', href: 'https://vk.com/', icon: 'vk' as const },
     { id: 'tg', label: 'Telegram', href: 'https://t.me/', icon: 'telegram' as const },
