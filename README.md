@@ -75,7 +75,7 @@
 | --- | --- |
 | Фронтенд | React 19, TypeScript, Vite 8, React Router 7, Leaflet 1.9 |
 | Стили | Собственная дизайн-система на CSS-переменных (без UI-китов) |
-| Бэкенд | ASP.NET Core Minimal API, .NET 10 |
+| Бэкенд | ASP.NET Core Minimal API, .NET 11 |
 | Данные | Единый JSON-сид (`frontend/src/data/seed.json`) + in-memory репозиторий |
 | PWA | Service worker + Web App Manifest (свой, без Workbox) |
 
@@ -107,7 +107,7 @@ vokrug-nsk/
 
 ## Быстрый старт
 
-Нужны Node.js 20+ и .NET SDK 10. Проверьте: `node -v`, `dotnet --version`.
+Нужны Node.js 20+ и .NET SDK 11. Проверьте: `node -v`, `dotnet --version` (нужен 11.x).
 
 ### 1. Фронтенд
 
@@ -131,7 +131,7 @@ dotnet run             # http://localhost:5080
 
 ```bash
 # без sudo, в домашнюю папку
-curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 10.0
+curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 11.0
 export PATH="$HOME/.dotnet:$PATH"
 ```
 
