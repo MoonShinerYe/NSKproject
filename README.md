@@ -160,10 +160,11 @@ npm run build          # dist/
 
 ### Деплой на хостинг
 
-**GitHub Pages — конфиг готов.**
-1. В репозитории: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-2. Вкладка **Actions → Deploy to GitHub Pages → Run workflow** (или просто запушь в `main`/`Test`).
-3. Сайт: `https://moonshinerye.github.io/NSKproject/`.
+**GitHub Pages — задеплоен:** https://moonshinerye.github.io/NSKproject/
+
+Любой push в `main` или `Test` запускает `.github/workflows/deploy-pages.yml` (сборка + публикация),
+вручную — **Actions → Deploy to GitHub Pages → Run workflow**. Источник публикации:
+**Settings → Pages → Source: GitHub Actions**.
 
 Workflow [deploy-pages.yml](.github/workflows/deploy-pages.yml) собирает фронтенд с
 `GITHUB_PAGES=true` (база `/NSKproject/`), создаёт `404.html` для глубоких ссылок и публикует
