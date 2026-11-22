@@ -1,0 +1,39 @@
+{
+  "name": "Вокруг НСК",
+  "short_name": "Вокруг НСК",
+  "description": "Гид по необычному Новосибирску: места, подборки, маршруты и челленджи с призами.",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "orientation": "portrait-primary",
+  "background_color": "#fff7e6",
+  "theme_color": "#fff7e6",
+  "categories": ["travel", "lifestyle", "navigation"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Каталог мест", "url": "/mesta" },
+    { "name": "Челленджи", "url": "/chellendzhi" },
+    { "name": "Маршруты", "url": "/marshruty" }
+  ]
+}
