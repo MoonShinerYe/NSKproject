@@ -5,7 +5,8 @@
  * Ловит опечатки в enum, битые ссылки на id, координаты вне Новосибирска
  * и несоответствия в подборках/маршрутах/челленджах.
  */
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 
 const seed = JSON.parse(
   readFileSync(new URL('../src/data/seed.json', import.meta.url), 'utf8'),
@@ -70,6 +71,16 @@ for (const [index, place] of places.entries()) {
   if (!place.cover || !isEnum(place.cover.pattern, PATTERNS)) fail(`${label}: cover.pattern должен быть из ${PATTERNS.join(', ')}`)
   if (!/^#[0-9a-f]{6}$/i.test(place.cover?.from ?? '') || !/^#[0-9a-f]{6}$/i.test(place.cover?.to ?? '')) {
     fail(`${label}: cover.from/to должны быть HEX-цветами`)
+  }
+
+  if (place.image !== undefined) {
+    if (typeof place.image !== 'string' || !place.image.trim()) {
+      fail(`${label}: image должно быть непустой строкой`)
+    } else if (!/^(https?:)?\/\//i.test(place.image) && !place.image.startsWith('data:')) {
+      const relative = place.image.replace(/^\.?\//, '')
+      const file = fileURLToPath(new URL(`../public/${relative}`, import.meta.url))
+      if (!existsSync(file)) fail(`${label}: фото не найдено — public/${relative}`)
+    }
   }
 
   if (!Array.isArray(place.reviews) || place.reviews.length < 1) {

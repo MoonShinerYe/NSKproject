@@ -29,9 +29,11 @@ export function SocialLinks() {
                 className={`social-btn__icon ${
                   social.id === 'tg'
                     ? 'social-btn__icon--tg'
-                    : social.id === 'yt'
-                      ? 'social-btn__icon--yt'
-                      : ''
+                    : social.id === 'ig'
+                      ? 'social-btn__icon--ig'
+                      : social.id === 'yt'
+                        ? 'social-btn__icon--yt'
+                        : ''
                 }`}
               >
                 <Icon name={social.icon} size={17} />

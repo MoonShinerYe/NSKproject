@@ -235,6 +235,7 @@ NSKproject/
 | `tips` | Блок «Совет от местных» |
 | `bestTime` | Факт «Когда лучше» |
 | `cover` | Градиент + узор обложки (см. раздел 7) |
+| `image` | Необязательное фото места: путь от корня сайта или URL |
 | `reviews` | 1–3 демо-отзыва |
 
 ### 4.4 Справочники значений
@@ -329,22 +330,27 @@ NSKproject/
 - Реальные отзывы: замени содержимое `reviews` (и убери подпись «Яндекс Карты», если данные не
   оттуда) или подключи официальный API источника.
 
-### 4.10 Реальные фото вместо генеративных обложек
+### 4.10 Фото мест (поддержка уже встроена)
 
-Сейчас обложки рисуются SVG-градиентами (`src/components/Cover.tsx`) — это сделано специально:
-работает офлайн, без внешних картинок и лицензионных вопросов.
+По умолчанию обложки рисуются SVG-градиентами (`src/components/Cover.tsx`) — это работает офлайн
+и не требует лицензий. Но если у места указано поле `image`, карточка и hero показывают фото;
+если файл не загрузился, автоматически возвращается генеративная обложка.
 
-Чтобы добавить фото:
+Как добавить фото:
 
-1. Положи файлы в `frontend/public/images/places/` (например `art-museum.jpg`).
-2. Добавь в `Place` необязательное поле `image?: string` (`src/types.ts`).
-3. В `seed.json` у места укажи `"image": "/images/places/art-museum.jpg"` (на GitHub Pages
-   лучше относительный путь, а `Cover` умеет работать с `import.meta.env.BASE_URL`).
-4. В `Cover.tsx` в компоненте `Cover` отрисуй `<img>` вместо `<CoverArt>`, если `image` задан.
-5. Следи за весом: 1200×800, WebP/JPEG до 200 КБ.
+1. Положи файл в `frontend/public/images/places/`, например `art-museum.jpg`
+   (WebP/JPEG, 1200×800, до 200 КБ — карточки режут по `object-fit: cover`).
+2. В `seed.json` у места добавь:
+   `"image": "images/places/art-museum.jpg"` — путь от корня сайта. Абсолютный URL тоже можно.
+   На GitHub Pages префикс `/NSKproject/` подставляется автоматически (`src/lib/media.ts`).
+3. Проверь `npm run validate:data` — валидатор убедится, что файл существует.
+4. `npm run dev` — фото появится в каталоге, рандомайзере и на странице места.
 
-Бэкенду это поле не нужно: неизвестные JSON-поля он игнорирует. Но если хочешь отдавать фото и
-через API — добавь поле в `Models.cs`.
+Эмодзи на обложке автоматически скрывается, когда есть фото. Места без `image` продолжают жить
+на генеративных обложках, так что переводить весь каталог на фото не обязательно.
+
+Бэкенд отдаёт `image` в API (поле добавлено в `Models.cs`), но для статического сайта это
+необязательно. Про лицензии на фото — см. `frontend/public/images/places/README.md`.
 
 ### 4.11 Координаты
 
@@ -392,7 +398,7 @@ import { Icon } from '../icons'
 
 Иконки в проекте: `pin, heart, star, compass, shuffle, clock, wallet, users, walk, bus, coffee,
 museum, park, camera, ticket, gift, check, chevron, search, filter, close, share, route, trophy,
-user, sparkles, arrow, moon, sun, vk, telegram, youtube, map`.
+user, sparkles, arrow, moon, sun, instagram, vk, telegram, youtube, map`.
 
 Альтернатива: поставить `lucide-react` и использовать его иконки напрямую — но тогда стиль
 толщины линий надо подгонять под текущий.
@@ -444,8 +450,10 @@ Windows, а в некоторых шрифтах могут отсутствов
 ### 5.4 Иконки соцсетей
 
 `frontend/src/config.ts` → `SITE.socials`: `id`, `label`, `href`, `icon`. Значение `icon`
-должно совпадать с именем из `icons.tsx` (`vk`, `telegram`, `youtube`). Добавляешь соцсеть —
-добавь иконку в `icons.tsx` и запись в массив; рендер уже готов (`SocialLinks.tsx`).
+должно совпадать с именем из `icons.tsx` (`telegram`, `vk`, `instagram`, `youtube`). Сейчас
+ссылки — заглушки на главные страницы соцсетей, замени `href` на свои. Добавляешь новую
+соцсеть — добавь иконку в `icons.tsx` и запись в массив; рендер уже готов (`SocialLinks.tsx`).
+Instagram-кнопка получает фирменный градиент через класс `.social-btn__icon--ig` в `base.css`.
 
 ---
 
@@ -795,7 +803,7 @@ git push origin Test
 | Поменять иконку интерфейса | `frontend/src/icons.tsx` |
 | Поменять эмодзи категории | `filters.ts` → `categoryMeta` |
 | Поменять фавикон/PWA-иконку | `frontend/public/`, `manifest.webmanifest`, при необходимости `sw.js` |
-| Добавить фото места | `Place.image` + `Cover.tsx` + `public/images/...` |
+| Добавить фото места | файл в `public/images/places/` + `image` в `seed.json` |
 | Добавить фильтр | `types.ts` → `Filters`, `filters.ts` → опции и `filterPlaces`, `FiltersPanel.tsx` |
 | Добавить страницу | `pages/`, `App.tsx`, при желании `Layout.tsx` → `NAV` |
 | Поменять порядок блоков на главной | `pages/Home.tsx` |
@@ -821,7 +829,8 @@ git push origin Test
 8. **Геолокация только на HTTPS/localhost.** Для телефона — туннель или демо-режим.
 9. **Карта и шрифты** в офлайне не грузятся — это ожидаемо.
 10. **Отзывы** — демо. Перед публикацией либо замени, либо честно пометь.
-11. **`main` засорён** — см. раздел 15.
+11. **Фото:** путь в `image` — от корня сайта (`images/places/x.jpg`), не абсолютный `/images/...`; иначе на GitHub Pages будет 404.
+12. **`main` засорён** — см. раздел 15.
 12. **Не коммить `node_modules`, `dist`, `bin/obj`** — они в `.gitignore`; если попали, удали из
     индекса: `git rm -r --cached <путь>`.
 

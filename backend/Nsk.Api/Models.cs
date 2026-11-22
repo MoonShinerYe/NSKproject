@@ -40,7 +40,8 @@ public sealed record Place(
     string Tips,
     string BestTime,
     Cover Cover,
-    List<Review> Reviews);
+    List<Review> Reviews,
+    string? Image = null);
 
 public sealed record Collection(
     string Id,

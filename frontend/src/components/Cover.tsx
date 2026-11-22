@@ -1,5 +1,6 @@
-import { useId, type ReactNode } from 'react'
+import { useEffect, useId, useState, type ReactNode } from 'react'
 import type { Cover as CoverType } from '../types'
+import { imageUrl } from '../lib/media'
 
 interface CoverArtProps {
   cover: CoverType
@@ -142,13 +143,34 @@ interface CoverProps {
   action?: ReactNode
   className?: string
   children?: ReactNode
+  /** Если задано фото — показываем его, иначе генеративную обложку. */
+  image?: string
 }
 
-export function Cover({ cover, glyph, chip, action, className, children }: CoverProps) {
+export function Cover({ cover, glyph, chip, action, className, children, image }: CoverProps) {
+  const [failed, setFailed] = useState(false)
+  const src = imageUrl(image)
+  const showPhoto = Boolean(src) && !failed
+
+  useEffect(() => {
+    setFailed(false)
+  }, [image])
+
   return (
-    <div className={`cover ${className ?? ''}`}>
-      <CoverArt cover={cover} />
-      {glyph ? <span className="cover__glyph">{glyph}</span> : null}
+    <div className={`cover ${showPhoto ? 'cover--photo' : ''} ${className ?? ''}`}>
+      {showPhoto ? (
+        <img
+          className="cover__photo"
+          src={src}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <CoverArt cover={cover} />
+      )}
+      {!showPhoto && glyph ? <span className="cover__glyph">{glyph}</span> : null}
       {chip ? <span className="cover__chip">{chip}</span> : null}
       {action ? <div className="cover__fav">{action}</div> : null}
       {children}

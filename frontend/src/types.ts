@@ -65,6 +65,8 @@ export interface Place {
   tips: string
   bestTime: string
   cover: Cover
+  /** Фото места: путь от корня сайта (images/places/x.jpg) или абсолютный URL. */
+  image?: string
   reviews: Review[]
 }
 

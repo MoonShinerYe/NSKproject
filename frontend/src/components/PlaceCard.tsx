@@ -10,6 +10,7 @@ export function PlaceCard({ place }: { place: Place }) {
     <Link to={`/mesta/${place.id}`} className="place-card" aria-label={place.name}>
       <Cover
         cover={place.cover}
+        image={place.image}
         className="place-card__cover"
         glyph={cat.emoji}
         chip={

@@ -44,7 +44,7 @@ export function Randomizer({ places, title = 'Не знаете, с чего н�
                     index === 0 && flipping ? 'rnd-card--flipping' : '',
                   ].join(' ')}
                 >
-                  <Cover cover={place.cover} glyph={meta.emoji} chip={meta.label} />
+                  <Cover cover={place.cover} image={place.image} glyph={meta.emoji} chip={meta.label} />
                   <div className="rnd-card__body">
                     <span className="rnd-card__title">{place.shortName}</span>
                     <span className="rnd-card__meta">

@@ -7,6 +7,7 @@ import { distanceMeters, formatDistance, getPosition } from '../lib/geo'
 import { categoryMeta, plural } from '../lib/filters'
 import { useStore } from '../lib/store'
 import { api, newDeviceId } from '../lib/api'
+import { imageUrl } from '../lib/media'
 import { Icon } from '../icons'
 import { CoverArt } from '../components/Cover'
 import { FavoriteButton, Rating } from '../components/Rating'
@@ -42,6 +43,7 @@ export function PlaceDetail() {
   const [formName, setFormName] = useState(name)
   const [formRating, setFormRating] = useState(5)
   const [formText, setFormText] = useState('')
+  const [heroFailed, setHeroFailed] = useState(false)
   const artRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -59,6 +61,10 @@ export function PlaceDetail() {
   useEffect(() => {
     setFormName(name)
   }, [name])
+
+  useEffect(() => {
+    setHeroFailed(false)
+  }, [place?.id])
 
   const checkin = place ? checkinFor(place.id) : undefined
   const localReviews = place ? (reviews[place.id] ?? []) : []
@@ -182,7 +188,16 @@ export function PlaceDetail() {
     <>
       <div className="place-hero">
         <div ref={artRef} className="place-hero__art">
-          <CoverArt cover={place.cover} />
+          {place.image && !heroFailed ? (
+            <img
+              className="place-hero__photo"
+              src={imageUrl(place.image)}
+              alt={place.name}
+              onError={() => setHeroFailed(true)}
+            />
+          ) : (
+            <CoverArt cover={place.cover} />
+          )}
         </div>
         <div className="place-hero__veil" />
         <div className="container place-hero__nav">

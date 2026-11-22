@@ -505,6 +505,23 @@ ol {
   object-fit: cover;
 }
 
+.cover--photo .cover__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cover--photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(36, 29, 26, 0.22), transparent 42%);
+}
+
 .cover__glyph {
   position: absolute;
   right: 12%;
