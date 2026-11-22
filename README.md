@@ -158,13 +158,41 @@ cd frontend
 npm run build          # dist/
 ```
 
-Варианты хостинга:
-- статикой (GitHub Pages, Netlify, Vercel, nginx) + отдельно API. Укажите адрес API при сборке:
-  `VITE_API_URL=https://api.example.com npm run build`;
-- всё с одного origin: скопируйте `frontend/dist/*` в `backend/Nsk.Api/wwwroot/`, бэкенд отдаст SPA
-  и API с одного порта (`UseDefaultFiles` + `MapFallbackToFile("index.html")`).
+### Деплой на хостинг
 
-Для GitHub Pages с относительным путём добавьте в `vite.config.ts` `base: '/NSKproject/'`.
+**GitHub Pages — конфиг готов.**
+1. В репозитории: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+2. Вкладка **Actions → Deploy to GitHub Pages → Run workflow** (или просто запушь в `main`/`Test`).
+3. Сайт: `https://moonshinerye.github.io/NSKproject/`.
+
+Workflow [deploy-pages.yml](.github/workflows/deploy-pages.yml) собирает фронтенд с
+`GITHUB_PAGES=true` (база `/NSKproject/`), создаёт `404.html` для глубоких ссылок и публикует
+`frontend/dist`. Роутер сам подхватывает `base` из `import.meta.env.BASE_URL`.
+
+**Netlify.** В корне лежит `netlify.toml`: `base=frontend`, команда сборки и SPA-редирект уже
+прописаны. Вариант без Git: `cd frontend && npm run build`, затем перетащить папку `frontend/dist`
+на https://app.netlify.com/drop.
+
+**Vercel.** В корне `vercel.json`: импортируй репозиторий — настройки сборки и rewrites подхватятся.
+
+**Показать друзьям без деплоя (HTTPS-туннель).**
+```bash
+cd frontend
+npm run build
+npm run preview -- --port 4173
+# в другом терминале:
+cloudflared tunnel --url http://127.0.0.1:4173
+```
+Публичная ссылка `https://…trycloudflare.com` появится в выводе и живёт, пока запущен туннель.
+HTTPS нужен, чтобы на телефоне работала геолокация.
+
+**Ограничение статического деплоя.** Без бэкенда сайт работает полностью (данные встроены в
+бандл), но `/api` недоступен: чек-ины и отзывы сохраняются только в браузере, в подвале будет
+«офлайн-режим». Для серверных чек-инов разверни `backend/Nsk.Api` (Render, Azure App Service,
+Fly.io) и собери фронт с `VITE_API_URL=https://api.example.com`.
+
+**Всё с одного origin.** Скопируй `frontend/dist/*` в `backend/Nsk.Api/wwwroot/` — бэкенд отдаст
+SPA и API с одного порта (`UseDefaultFiles` + `MapFallbackToFile("index.html")`).
 
 ---
 

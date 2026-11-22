@@ -6,9 +6,12 @@ import { StoreProvider } from './lib/store'
 import './styles/base.css'
 import './styles/pages.css'
 
+// На GitHub Pages сайт живёт по адресу /NSKproject/, на остальных хостингах — в корне.
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <StoreProvider>
         <App />
       </StoreProvider>
