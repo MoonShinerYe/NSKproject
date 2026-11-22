@@ -1,6 +1,8 @@
-/* Service worker «Вокруг НСК»: офлайн-кэш без установки отдельного приложения. */
-const CACHE = 'vokrug-nsk-v1'
-const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/favicon.svg']
+/* Service worker «Вокруг НСК»: офлайн-кэш без установки отдельного приложения.
+   Работает и в корне домена, и в подпапке (GitHub Pages: /NSKproject/). */
+const CACHE = 'vokrug-nsk-v2'
+const BASE = new URL('./', self.location.href).pathname
+const SHELL = [BASE, `${BASE}index.html`, `${BASE}manifest.webmanifest`, `${BASE}favicon.svg`]
 
 // Кэшируем оболочку и хешированные бандлы из index.html,
 // чтобы офлайн работал уже после первого визита.
@@ -9,9 +11,16 @@ async function precache() {
   await cache.addAll(SHELL)
 
   try {
-    const html = await (await fetch('/index.html', { cache: 'reload' })).text()
-    const assets = [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)].map((match) => match[1])
-    await Promise.all(assets.map((url) => cache.add(url).catch(() => undefined)))
+    const html = await (await fetch(`${BASE}index.html`, { cache: 'reload' })).text()
+    const assets = [...html.matchAll(/(?:src|href)="([^"]*\/assets\/[^"]+)"/g)].map(
+      (match) => match[1].replace(/^\//, '/'),
+    )
+    await Promise.all(
+      assets.map((url) => {
+        const absolute = url.startsWith(BASE) ? url : `${BASE}${url.replace(/^\//, '')}`
+        return cache.add(absolute).catch(() => undefined)
+      }),
+    )
   } catch {
     /* офлайн-кэш соберётся при следующем визите */
   }
@@ -43,13 +52,13 @@ self.addEventListener('fetch', (event) => {
       fetch(request)
         .then((response) => {
           const copy = response.clone()
-          caches.open(CACHE).then((cache) => cache.put('/index.html', copy))
+          caches.open(CACHE).then((cache) => cache.put(`${BASE}index.html`, copy))
           return response
         })
         .catch(() =>
           caches
-            .match('/index.html', { ignoreVary: true })
-            .then((cached) => cached ?? caches.match('/', { ignoreVary: true })),
+            .match(`${BASE}index.html`, { ignoreVary: true })
+            .then((cached) => cached ?? caches.match(BASE, { ignoreVary: true })),
         ),
     )
     return
@@ -61,7 +70,10 @@ self.addEventListener('fetch', (event) => {
       if (cached) return cached
       return fetch(request)
         .then((response) => {
-          if (response.ok && (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/icons/'))) {
+          if (
+            response.ok &&
+            (url.pathname.includes('/assets/') || url.pathname.includes('/icons/'))
+          ) {
             const copy = response.clone()
             caches.open(CACHE).then((cache) => cache.put(request, copy))
           }
