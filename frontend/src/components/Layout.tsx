@@ -159,7 +159,7 @@ function Footer() {
             {backend === 'online'
               ? 'API подключён'
               : backend === 'offline'
-                ? 'офлайн-режим'
+                ? 'локальный режим'
                 : 'проверяем API…'}
           </span>
         </div>
